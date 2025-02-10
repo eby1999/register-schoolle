@@ -1,0 +1,71 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #2a5298;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+}
+
+/* تنسيق الحاوية */
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+/* تنسيق العنوان */
+h1.vag {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffcc00;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+/* تنسيق الحقول */
+form {
+    text-align: left;
+}
+
+label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f8f8f8;
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    color: #333;
+    outline: none;
+}
+
+/* تنسيق الزر */
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(to right, #ff512f, #f09819);
+}

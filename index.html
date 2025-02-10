@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل الطلاب</title>
+    <style>
+        @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(45deg, #ff9a8b, #fecf45, #f6d365);
+            background-size: 300% 300%;
+            animation: gradientBackground 10s ease infinite;
+            color: white;
+            padding: 20px;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 220px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: scale(1.05);
+        }
+        #form-container, #students-list, #modify-container {
+            display: none;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            color: #333;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #ff9a8b;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        .exit-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>أهلا بك في سجل الطلاب</h1>
+    <button class="button" onclick="showForm()">تسجيل طالب جديد</button>
+    <button class="button" onclick="showStudentsList()">عرض لائحة الطلاب</button>
+    <button class="button" onclick="showModifyForm()">إجراء تغيير</button>
+    <button class="button exit-button" onclick="goHome()">العودة للصفحة الرئيسية</button>
+
+    <div id="form-container">
+        <h2>تسجيل طالب جديد</h2>
+        <form id="student-form">
+            <input type="text" id="name" placeholder="الاسم" required>
+            <input type="text" id="id-card" placeholder="رقم بطاقة التعريف" required>
+            <input type="text" id="student-number" placeholder="الرقم المدرسي" required>
+            <input type="date" id="birth-year" placeholder="سنة الميلاد" required>
+            <input type="text" id="level" placeholder="المستوى الدراسي" required>
+            <input type="number" id="exam1" placeholder="نتيجة الامتحان الأول" required>
+            <input type="number" id="exam2" placeholder="نتيجة الامتحان الثاني" required>
+            <input type="number" id="exam3" placeholder="نتيجة الامتحان الثالث" required>
+            <button type="button" class="button" onclick="saveForm()">حفظ</button>
+        </form>
+    </div>
+
+    <div id="students-list">
+        <h2>لائحة الطلاب</h2>
+        <table id="students-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم</th>
+                    <th>رقم بطاقة التعريف</th>
+                    <th>الرقم المدرسي</th>
+                    <th>سنة الميلاد</th>
+                    <th>المستوى الدراسي</th>
+                    <th>نتيجة الامتحان الأول</th>
+                    <th>نتيجة الامتحان الثاني</th>
+                    <th>نتيجة الامتحان الثالث</th>
+                </tr>
+            </thead>
+            <tbody id="students-tbody"></tbody>
+        </table>
+    </div>
+
+    <div id="modify-container">
+        <h2>تغيير بيانات الطالب</h2>
+        <input type="text" id="modify-student-number" placeholder="أدخل الرقم المدرسي" required>
+        <button class="button" onclick="findStudent()">بحث</button>
+        <form id="modify-form" style="display:none;">
+            <input type="text" id="modify-name" placeholder="الاسم الجديد">
+            <input type="text" id="modify-id-card" placeholder="رقم بطاقة التعريف الجديد">
+            <input type="date" id="modify-birth-year" placeholder="سنة الميلاد الجديدة">
+            <input type="text" id="modify-level" placeholder="المستوى الدراسي الجديد">
+            <input type="number" id="modify-exam1" placeholder="نتيجة الامتحان الأول الجديدة">
+            <input type="number" id="modify-exam2" placeholder="نتيجة الامتحان الثاني الجديدة">
+            <input type="number" id="modify-exam3" placeholder="نتيجة الامتحان الثالث الجديدة">
+            <button type="button" class="button" onclick="saveModifiedForm()">حفظ التعديلات</button>
+        </form>
+    </div>
+
+    <script>
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+
+        function showForm() {
+            hideAllSections();
+            document.getElementById('form-container').style.display = 'block';
+        }
+
+        function showStudentsList() {
+            const studentsTbody = document.getElementById('students-tbody');
+            studentsTbody.innerHTML = '';
+            if (students.length === 0) {
+                studentsTbody.innerHTML = '<tr><td colspan="9">لا يوجد طلاب مسجلين حاليًا.</td></tr>';
+            } else {
+                students.forEach((student, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${student.name}</td>
+                        <td>${student.idCard}</td>
+                        <td>${student.studentNumber}</td>
+                        <td>${student.birthYear}</td>
+                        <td>${student.level}</td>
+                        <td>${student.exam1}</td>
+                        <td>${student.exam2}</td>
+                        <td>${student.exam3}</td>
+                    `;
+                    studentsTbody.appendChild(row);
+                });
+            }
+            hideAllSections();
+            document.getElementById('students-list').style.display = 'block';
+        }
+
+        function showModifyForm() {
+            hideAllSections();
+            document.getElementById('modify-container').style.display = 'block';
+        }
+
+        function hideAllSections() {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('students-list').style.display = 'none';
+            document.getElementById('modify-container').style.display = 'none';
+        }
+
+        function goHome() {
+            hideAllSections();
+        }
+
+        function saveForm() {
+            const name = document.getElementById('name').value;
+            const idCard = document.getElementById('id-card').value;
+            const studentNumber = document.getElementById('student-number').value;
+            const birthYear = document.getElementById('birth-year').value;
+            const level = document.getElementById('level').value;
+            const exam1 = document.getElementById('exam1').value;
+            const exam2 = document.getElementById('exam2').value;
+            const exam3 = document.getElementById('exam3').value;
+
+            if (name && idCard && studentNumber && birthYear && level && exam1 && exam2 && exam3) {
+                const newStudent = { name, idCard, studentNumber, birthYear, level, exam1, exam2, exam3 };
+                students.push(newStudent);
+                localStorage.setItem('students', JSON.stringify(students));
+                alert('تم حفظ بيانات الطالب بنجاح!');
+                document.getElementById('student-form').reset();
+                goHome();
+            } else {
+                alert('يرجى ملء جميع الحقول!');
+            }
+        }
+
+        function findStudent() {
+            const studentNumber = document.getElementById('modify-student-number').value;
+            const student = students.find(s => s.studentNumber === studentNumber);
+            if (student) {
+                document.getElementById('modify-form').style.display = 'block';
+                document.getElementById('modify-name').value = student.name;
+                document.getElementById('modify-id-card').value = student.idCard;
+                document.getElementById('modify-birth-year').value = student.birthYear;
+                document.getElementById('modify-level').value = student.level;
+                document.getElementById('modify-exam1').value = student.exam1;
+                document.getElementById('modify-exam2').value = student.exam2;
+                document.getElementById('modify-exam3').value = student.exam3;
+            } else {
+                alert('لم يتم العثور على طالب بهذا الرقم المدرسي.');
+            }
+        }
+
+        function saveModifiedForm() {
+            const studentNumber = document.getElementById('modify-student-number').value;
+            const student = students.find(s => s.studentNumber === studentNumber);
+            if (student) {
+                student.name = document.getElementById('modify-name').value;
+                student.idCard = document.getElementById('modify-id-card').value;
+                student.birthYear = document.getElementById('modify-birth-year').value;
+                student.level = document.getElementById('modify-level').value;
+                student.exam1 = document.getElementById('modify-exam1').value;
+                student.exam2 = document.getElementById('modify-exam2').value;
+                student.exam3 = document.getElementById('modify-exam3').value;
+                localStorage.setItem('students', JSON.stringify(students));
+                alert('تم حفظ التعديلات بنجاح!');
+                document.getElementById('modify-form').reset();
+                goHome();
+            } else {
+                alert('حدث خطأ أثناء حفظ التعديلات.');
+            }
+        }
+    </script>
+</body>
+</html>
