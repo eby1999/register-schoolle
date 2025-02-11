@@ -43,7 +43,7 @@
             background-color: rgba(0, 0, 0, 0.8);
             transform: scale(1.05);
         }
-        #form-container, #students-list, #modify-container {
+        #form-container, #students-list, #modify-container, #delete-container {
             display: none;
             margin-top: 20px;
             background-color: rgba(255, 255, 255, 0.9);
@@ -59,9 +59,15 @@
         input {
             width: 100%;
             padding: 8px;
-            margin: 10px 0;
+            margin: 5px 0 20px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
         }
         table {
             width: 100%;
@@ -92,20 +98,37 @@
     <button class="button" onclick="showForm()">تسجيل طالب جديد</button>
     <button class="button" onclick="showStudentsList()">عرض لائحة الطلاب</button>
     <button class="button" onclick="showModifyForm()">إجراء تغيير</button>
+    <button class="button" onclick="showDeleteForm()">حذف بيانات طالب</button>
     <button class="button exit-button" onclick="goHome()">العودة للصفحة الرئيسية</button>
 
     <div id="form-container">
         <h2>تسجيل طالب جديد</h2>
         <form id="student-form">
-            <input type="text" id="name" placeholder="الاسم" required>
-            <input type="text" id="id-card" placeholder="رقم بطاقة التعريف" required>
-            <input type="text" id="student-number" placeholder="الرقم المدرسي" required>
-            <input type="date" id="birth-year" placeholder="سنة الميلاد" required>
-            <input type="text" id="level" placeholder="المستوى الدراسي" required>
-            <input type="number" id="exam1" placeholder="نتيجة الامتحان الأول" required>
-            <input type="number" id="exam2" placeholder="نتيجة الامتحان الثاني" required>
-            <input type="number" id="exam3" placeholder="نتيجة الامتحان الثالث" required>
-            <button type="button" class="button" onclick="saveForm()">حفظ</button>
+            <label for="name">الاسم</label>
+            <input type="text" id="name" placeholder="أدخل اسم الطالب" required>
+            
+            <label for="id-card">رقم بطاقة التعريف</label>
+            <input type="number" id="id-card" placeholder="أدخل رقم بطاقة التعريف" required>
+            
+            <label for="student-number">الرقم المدرسي</label>
+            <input type="number" id="student-number" placeholder="أدخل الرقم المدرسي" required>
+            
+            <label for="birth-year">سنة الميلاد</label>
+            <input type="date" id="birth-year" required>
+            
+            <label for="level">المستوى الدراسي</label>
+            <input type="text" id="level" placeholder="أدخل المستوى الدراسي" required>
+            
+            <label for="exam1">نتيجة الامتحان الأول</label>
+            <input type="number" id="exam1" placeholder="أدخل نتيجة الامتحان الأول" required>
+            
+            <label for="exam2">نتيجة الامتحان الثاني</label>
+            <input type="number" id="exam2" placeholder="أدخل نتيجة الامتحان الثاني" required>
+            
+            <label for="exam3">نتيجة الامتحان الثالث</label>
+            <input type="number" id="exam3" placeholder="أدخل نتيجة الامتحان الثالث" required>
+            
+            <button type="button" class="button" onclick="saveStudentData()">حفظ</button>
         </form>
     </div>
 
@@ -123,6 +146,7 @@
                     <th>نتيجة الامتحان الأول</th>
                     <th>نتيجة الامتحان الثاني</th>
                     <th>نتيجة الامتحان الثالث</th>
+                    <th>المعدل النهائي</th>
                 </tr>
             </thead>
             <tbody id="students-tbody"></tbody>
@@ -131,18 +155,44 @@
 
     <div id="modify-container">
         <h2>تغيير بيانات الطالب</h2>
-        <input type="text" id="modify-student-number" placeholder="أدخل الرقم المدرسي" required>
-        <button class="button" onclick="findStudent()">بحث</button>
-        <form id="modify-form" style="display:none;">
-            <input type="text" id="modify-name" placeholder="الاسم الجديد">
-            <input type="text" id="modify-id-card" placeholder="رقم بطاقة التعريف الجديد">
-            <input type="date" id="modify-birth-year" placeholder="سنة الميلاد الجديدة">
-            <input type="text" id="modify-level" placeholder="المستوى الدراسي الجديد">
-            <input type="number" id="modify-exam1" placeholder="نتيجة الامتحان الأول الجديدة">
-            <input type="number" id="modify-exam2" placeholder="نتيجة الامتحان الثاني الجديدة">
-            <input type="number" id="modify-exam3" placeholder="نتيجة الامتحان الثالث الجديدة">
-            <button type="button" class="button" onclick="saveModifiedForm()">حفظ التعديلات</button>
+        <form id="modify-form">
+            <label for="modify-student-number">الرقم المدرسي</label>
+            <input type="number" id="modify-student-number" placeholder="أدخل الرقم المدرسي" required>
+            <button type="button" class="button" onclick="findStudentToModify()">بحث</button>
+
+            <div id="modify-fields" style="display:none;">
+                <label for="modify-name">الاسم</label>
+                <input type="text" id="modify-name" placeholder="أدخل اسم الطالب">
+
+                <label for="modify-id-card">رقم بطاقة التعريف</label>
+                <input type="number" id="modify-id-card" placeholder="أدخل رقم بطاقة التعريف">
+
+                <label for="modify-birth-year">سنة الميلاد</label>
+                <input type="date" id="modify-birth-year">
+
+                <label for="modify-level">المستوى الدراسي</label>
+                <input type="text" id="modify-level" placeholder="أدخل المستوى الدراسي">
+
+                <label for="modify-exam1">نتيجة الامتحان الأول</label>
+                <input type="number" id="modify-exam1" placeholder="أدخل نتيجة الامتحان الأول">
+
+                <label for="modify-exam2">نتيجة الامتحان الثاني</label>
+                <input type="number" id="modify-exam2" placeholder="أدخل نتيجة الامتحان الثاني">
+
+                <label for="modify-exam3">نتيجة الامتحان الثالث</label>
+                <input type="number" id="modify-exam3" placeholder="أدخل نتيجة الامتحان الثالث">
+
+                <button type="button" class="button" onclick="saveModifiedData()">حفظ التعديلات</button>
+            </div>
         </form>
+    </div>
+
+    <div id="delete-container">
+        <h2>حذف بيانات طالب</h2>
+        <label for="delete-student-number">أدخل الرقم المدرسي</label>
+        <input type="number" id="delete-student-number" placeholder="الرقم المدرسي" required>
+        <button class="button" onclick="confirmDeleteStudent()">حذف طالب</button>
+        <button class="button" onclick="confirmDeleteAllStudents()">حذف جميع الطلاب</button>
     </div>
 
     <script>
@@ -157,7 +207,7 @@
             const studentsTbody = document.getElementById('students-tbody');
             studentsTbody.innerHTML = '';
             if (students.length === 0) {
-                studentsTbody.innerHTML = '<tr><td colspan="9">لا يوجد طلاب مسجلين حاليًا.</td></tr>';
+                studentsTbody.innerHTML = '<tr><td colspan="10">لا يوجد طلاب مسجلين حاليًا.</td></tr>';
             } else {
                 students.forEach((student, index) => {
                     const row = document.createElement('tr');
@@ -171,6 +221,7 @@
                         <td>${student.exam1}</td>
                         <td>${student.exam2}</td>
                         <td>${student.exam3}</td>
+                        <td>${((+student.exam1 + +student.exam2 + +student.exam3) / 3).toFixed(2)}</td>
                     `;
                     studentsTbody.appendChild(row);
                 });
@@ -184,73 +235,53 @@
             document.getElementById('modify-container').style.display = 'block';
         }
 
+        function showDeleteForm() {
+            hideAllSections();
+            document.getElementById('delete-container').style.display = 'block';
+        }
+
         function hideAllSections() {
             document.getElementById('form-container').style.display = 'none';
             document.getElementById('students-list').style.display = 'none';
             document.getElementById('modify-container').style.display = 'none';
+            document.getElementById('delete-container').style.display = 'none';
         }
 
         function goHome() {
             hideAllSections();
         }
 
-        function saveForm() {
-            const name = document.getElementById('name').value;
-            const idCard = document.getElementById('id-card').value;
-            const studentNumber = document.getElementById('student-number').value;
-            const birthYear = document.getElementById('birth-year').value;
-            const level = document.getElementById('level').value;
-            const exam1 = document.getElementById('exam1').value;
-            const exam2 = document.getElementById('exam2').value;
-            const exam3 = document.getElementById('exam3').value;
-
-            if (name && idCard && studentNumber && birthYear && level && exam1 && exam2 && exam3) {
-                const newStudent = { name, idCard, studentNumber, birthYear, level, exam1, exam2, exam3 };
-                students.push(newStudent);
-                localStorage.setItem('students', JSON.stringify(students));
-                alert('تم حفظ بيانات الطالب بنجاح!');
-                document.getElementById('student-form').reset();
-                goHome();
-            } else {
-                alert('يرجى ملء جميع الحقول!');
+        function confirmDeleteStudent() {
+            const studentNumber = document.getElementById('delete-student-number').value;
+            if (confirm('هل أنت متأكد أنك تريد حذف بيانات هذا الطالب؟')) {
+                deleteStudent(studentNumber);
             }
         }
 
-        function findStudent() {
-            const studentNumber = document.getElementById('modify-student-number').value;
-            const student = students.find(s => s.studentNumber === studentNumber);
-            if (student) {
-                document.getElementById('modify-form').style.display = 'block';
-                document.getElementById('modify-name').value = student.name;
-                document.getElementById('modify-id-card').value = student.idCard;
-                document.getElementById('modify-birth-year').value = student.birthYear;
-                document.getElementById('modify-level').value = student.level;
-                document.getElementById('modify-exam1').value = student.exam1;
-                document.getElementById('modify-exam2').value = student.exam2;
-                document.getElementById('modify-exam3').value = student.exam3;
+        function confirmDeleteAllStudents() {
+            if (confirm('هل أنت متأكد أنك تريد حذف جميع بيانات الطلاب؟')) {
+                deleteAllStudents();
+            }
+        }
+
+        function deleteStudent(studentNumber) {
+            const studentIndex = students.findIndex(s => s.studentNumber === studentNumber);
+            if (studentIndex !== -1) {
+                students.splice(studentIndex, 1);
+                localStorage.setItem('students', JSON.stringify(students));
+                alert('تم حذف بيانات الطالب بنجاح!');
+                document.getElementById('delete-student-number').value = '';
+                goHome();
             } else {
                 alert('لم يتم العثور على طالب بهذا الرقم المدرسي.');
             }
         }
 
-        function saveModifiedForm() {
-            const studentNumber = document.getElementById('modify-student-number').value;
-            const student = students.find(s => s.studentNumber === studentNumber);
-            if (student) {
-                student.name = document.getElementById('modify-name').value;
-                student.idCard = document.getElementById('modify-id-card').value;
-                student.birthYear = document.getElementById('modify-birth-year').value;
-                student.level = document.getElementById('modify-level').value;
-                student.exam1 = document.getElementById('modify-exam1').value;
-                student.exam2 = document.getElementById('modify-exam2').value;
-                student.exam3 = document.getElementById('modify-exam3').value;
-                localStorage.setItem('students', JSON.stringify(students));
-                alert('تم حفظ التعديلات بنجاح!');
-                document.getElementById('modify-form').reset();
-                goHome();
-            } else {
-                alert('حدث خطأ أثناء حفظ التعديلات.');
-            }
+        function deleteAllStudents() {
+            students = [];
+            localStorage.setItem('students', JSON.stringify(students));
+            alert('تم حذف جميع بيانات الطلاب بنجاح!');
+            goHome();
         }
     </script>
 </body>
